@@ -6,3 +6,4 @@ seaborn
 tqdm
 beautifulsoup4
 jupyter
+nltk
