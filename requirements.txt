@@ -17,3 +17,8 @@ scikit-learn==1.3.2
 
 python-slugify[unidecode]
 apache-airflow-client
+
+# for cli commands
+click
+opencv-python~=4.8.0.74
+# cli commands end
