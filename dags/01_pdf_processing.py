@@ -139,6 +139,12 @@ t6_join_page_hocr = PythonOperator(
     dag=dag,
 )
 
+t7_join_page_txt = BashOperator(
+    task_id='join_page_txt',
+    bash_command='cat {{ti.xcom_pull(key="TXT_DIR")}}/*.txt > {{ti.xcom_pull(key="TXT_DIR")}}/../all.txt',
+    dag=dag,
+)
+
 trigger = TriggerDagRunOperator(
     task_id='trigger_compare_langs',
     trigger_dag_id='compare_langs',
@@ -152,5 +158,5 @@ trigger = TriggerDagRunOperator(
 
 t0_push_variables >> t1_create_directories >> t2_convert_pdf_to_jpg >> t3_tesseract_by_page
 t3_tesseract_by_page >> t4_move_hocr_files
-t4_move_hocr_files >> t6_join_page_hocr
-t3_tesseract_by_page >> t5_move_tsv_files >> trigger
+t3_tesseract_by_page >> t5_move_tsv_files
+t4_move_hocr_files >> t6_join_page_hocr >> t7_join_page_txt >> trigger
