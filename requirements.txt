@@ -1,2 +1,7 @@
 apache-airflow[celery,postgres,redis,pandas,ssh]==2.7.2
 -c https://raw.githubusercontent.com/apache/airflow/constraints-2.7.2/constraints-3.8.txt
+matplotlib
+pillow
+seaborn
+tqdm
+beautifulsoup4
