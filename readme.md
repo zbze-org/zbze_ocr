@@ -27,3 +27,15 @@ sql_alchemy_conn = postgresql+psycopg2://zbze_ocr:12345@localhost:5432/airflow_d
 executor = CeleryExecutor
 ```
 
+# run airflow
+```sh
+airflow webserver -p 8080
+```
+
+```shell
+airflow scheduler
+```
+
+```sh
+airflow celery worker
+```
