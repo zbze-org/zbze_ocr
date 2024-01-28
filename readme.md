@@ -61,6 +61,11 @@ AIRFLOW_HOME=$(echo $(pwd)) airflow scheduler
 AIRFLOW_HOME=$(echo $(pwd)) airflow celery worker
 ```
 
+## stop all airflow process 
+```sh
+ps -ef | grep 'airflow' | grep -v grep | awk '{print $2}' | xargs -r kill -9
+```
+
 ```shell
 AIRFLOW_HOME=$(echo $(pwd)) airflow users create \
           --username zbze \
@@ -82,7 +87,7 @@ AIRFLOW_HOME=$(echo $(pwd)) airflow db migrate
 AIRFLOW_HOME=$(echo $(pwd)) airflow db check-migrations
 ```
 
-## stop all airflow process 
-```sh
-ps -ef | grep 'airflow' | grep -v grep | awk '{print $2}' | xargs -r kill -9
+cp tesseract trained model to tessdata
+```shell
+sudo cp data/tesstrain/kbd/trained_data/kbd.traineddata  /usr/share/tesseract-ocr/5/tessdata/
 ```
