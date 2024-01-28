@@ -1,0 +1,56 @@
+# Настройки языка и алфавита
+tessedit_char_whitelist I АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890.,:;!?()-[]{}'"<>«»„“”‘’—/|\@#$%^&*_+=
+tessedit_pageseg_mode 1
+
+# Путь к пользовательскому словарю
+# user_words_suffix custom.dictionary.txt
+
+# Отключить стандартный словарь
+load_system_dawg	1	Load system word dawg.
+load_freq_dawg	1	Load frequent word dawg.
+load_unambig_dawg	1	Load unambiguous word dawg.
+load_punc_dawg	1	Load dawg with punctuation patterns.
+load_number_dawg	1	Load dawg with number patterns.
+load_bigram_dawg	1	Load dawg with special word bigrams.
+
+# через конфиг нельзя передать, нужно чтобы лежал внутри .traineddata
+# unicharambigs kbd.unicharambigs
+
+
+# добавить пенальти для слов не из словаря,пока не подобрал оптимальное значение
+language_model_penalty_non_freq_dict_word	0.2	Penalty for words not in the frequent word dictionary
+# добавить пенальти для слов из словаря (0.7 - 0.8 прям хорошо)
+language_model_penalty_non_dict_word	0.7	Penalty for non-dictionary words
+language_model_penalty_punc	0.2	Penalty for inconsistent punctuation
+language_model_penalty_case	0.9	Penalty for inconsistent case
+language_model_penalty_script	0.5	Penalty for inconsistent script
+language_model_penalty_chartype	0.3	Penalty for inconsistent character type
+language_model_penalty_font	0	Penalty for inconsistent font
+language_model_penalty_spacing	0.05	Penalty for inconsistent spacing
+language_model_penalty_increment	0.01	Penalty increment
+
+# дебаг поиска слов
+ambigs_debug_level 3
+dawg_debug_level 3
+tessedit_bigram_debug 1
+language_model_ngram_on 1
+language_model_debug_level 2
+
+output_ambig_words_file tesseract_debug.txt
+
+
+tessedit_create_txt	1
+tessedit_create_hocr 1
+tessedit_create_alto 0
+tessedit_create_lstmbox 0
+tessedit_create_tsv 1
+tessedit_create_wordstrbox 0
+tessedit_create_pdf 0
+
+tessedit_create_boxfile 0
+tessedit_write_images 0
+
+interactive_display_mode 0
+
+hocr_char_boxes 0  # 1 - выводить координаты символов в hocr
+save_doc_words 1
