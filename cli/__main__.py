@@ -10,6 +10,7 @@ from cli import (
     rotate_img,
     smooth_img,
     apply_img_filters,
+    run_tesseract_for_page,
     ocr_text_diff,
 )
 
@@ -24,6 +25,7 @@ cli.add_command(split_book_layout.split_book_layout)
 cli.add_command(rotate_img.rotate_img)
 cli.add_command(smooth_img.smooth_img)
 cli.add_command(apply_img_filters.apply_img_filters)
+cli.add_command(run_tesseract_for_page.run_tesseract_for_page)
 cli.add_command(ocr_text_diff.compare_texts)
 
 if __name__ == '__main__':
