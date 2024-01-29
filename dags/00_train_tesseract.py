@@ -6,7 +6,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
-from src.const import TESSTRAIN_DIR, GLOBAL_TESSDATA_DIR
+from src.const import TESSTRAIN_PROJECT_DIR, GLOBAL_TESSDATA_DIR, TESSTRAIN_LANG_CONFIG
 
 DAG_ID = 'train_tesseract'
 
@@ -27,9 +27,9 @@ dag = DAG(
         'START_MODEL': 'rus',
         'MAX_ITERATIONS': '10000',
         'GROUND_TRUTH_DIR': '/Users/panagoa/tesstrain_data/60k_ng',
-        'WORDLIST_FILE': '/Users/panagoa/airflow/data/tesstrain/kbd/configs/kbd.numbers',
-        'NUMBERS_FILE': '/Users/panagoa/airflow/data/tesstrain/kbd/configs/kbd.punc',
-        'PUNC_FILE': '/Users/panagoa/airflow/data/tesstrain/kbd/configs/kbd.wordlist',
+        'WORDLIST_FILE': os.path.join(TESSTRAIN_LANG_CONFIG, 'kbd.numbers'),
+        'NUMBERS_FILE': os.path.join(TESSTRAIN_LANG_CONFIG, 'kbd.punc'),
+        'PUNC_FILE': os.path.join(TESSTRAIN_LANG_CONFIG, 'kbd.wordlist'),
         'LOG_FILE': '/Users/panagoa/PycharmProjects/tesstrain/plot/output_kbd_airflow.log',
         'TEST_PDF_NAME': 'dysche_zhyg.pdf',
         'LANG_COMPARE': 'kbd_0.009_4360_66700',
@@ -48,7 +48,7 @@ def push_variables(**kwargs):
     punc_file = kwargs['dag_run'].conf.get('PUNC_FILE')
     log_file = kwargs['dag_run'].conf.get('LOG_FILE')
     test_pdf_name = kwargs['dag_run'].conf.get('TEST_PDF_NAME')
-    best_traineddata_dir = os.path.join(TESSTRAIN_DIR, 'data', model_name, 'tessdata_best')
+    best_traineddata_dir = os.path.join(TESSTRAIN_PROJECT_DIR, 'data', model_name, 'tessdata_best')
 
     kwargs['ti'].xcom_push(key='MODEL_NAME', value=model_name)
     kwargs['ti'].xcom_push(key='START_MODEL', value=start_model)
@@ -61,7 +61,7 @@ def push_variables(**kwargs):
     kwargs['ti'].xcom_push(key='TEST_PDF_NAME', value=test_pdf_name)
     kwargs['ti'].xcom_push(key='LANG_COMPARE', value=lang_compare)
 
-    kwargs['ti'].xcom_push(key='TESSTRAIN_DIR', value=TESSTRAIN_DIR)
+    kwargs['ti'].xcom_push(key='TESSTRAIN_DIR', value=TESSTRAIN_PROJECT_DIR)
     kwargs['ti'].xcom_push(key='BEST_TRAINEDDATA_DIR', value=best_traineddata_dir)
     kwargs['ti'].xcom_push(key='GLOBAL_TESSDATA_DIR', value=GLOBAL_TESSDATA_DIR)
 
@@ -75,7 +75,7 @@ t0_push_variables = PythonOperator(
 
 t1_run_train_tesseract = BashOperator(
     task_id='run_train_tesseract',
-    cwd=TESSTRAIN_DIR,
+    cwd=TESSTRAIN_PROJECT_DIR,
     bash_command=(
         "nohup gmake training "
         "TESSDATA={{ ti.xcom_pull(key='GLOBAL_TESSDATA_DIR') }} "
@@ -93,7 +93,7 @@ t1_run_train_tesseract = BashOperator(
 
 t2_traineddata = BashOperator(
     task_id='traineddata',
-    cwd=TESSTRAIN_DIR,
+    cwd=TESSTRAIN_PROJECT_DIR,
     bash_command=(
         "nohup gmake traineddata "
         "MODEL_NAME={{ ti.xcom_pull(key='MODEL_NAME') }} "
@@ -103,7 +103,7 @@ t2_traineddata = BashOperator(
 
 t3_cp_best_traineddata_to_tessdata = BashOperator(
     task_id='cp_best_traineddata_to_tessdata',
-    cwd=TESSTRAIN_DIR,
+    cwd=TESSTRAIN_PROJECT_DIR,
     bash_command=(
         "BEST_TRAINEDDATA=$(ls {{ ti.xcom_pull(key='BEST_TRAINEDDATA_DIR') }} | grep traineddata | head -n 1) && "
         "cp {{ ti.xcom_pull(key='BEST_TRAINEDDATA_DIR') }}/$BEST_TRAINEDDATA "
@@ -114,7 +114,7 @@ t3_cp_best_traineddata_to_tessdata = BashOperator(
 
 t4_cp_best_traineddata_to_global_tessdata = BashOperator(
     task_id='cp_best_traineddata_to_global_tessdata',
-    cwd=TESSTRAIN_DIR,
+    cwd=TESSTRAIN_PROJECT_DIR,
     bash_command=(
         "BEST_TRAINEDDATA=$(ls {{ ti.xcom_pull(key='BEST_TRAINEDDATA_DIR') }} | grep traineddata | head -n 1) && "
         "cp {{ ti.xcom_pull(key='BEST_TRAINEDDATA_DIR') }}/$BEST_TRAINEDDATA "

@@ -22,7 +22,7 @@ def split_pdf_to_jpeg(input_file_path, output_dir):
     os.makedirs(output_file_path, exist_ok=True)
 
     # Run the pdftoppm command
-    subprocess.run(["pdftoppm", "-jpeg", "-progress", input_file_path, output_file_path])
+    subprocess.run(["pdftoppm", "-jpeg", "-progress", "-r", "300", input_file_path, output_file_path])
 
 
 if __name__ == '__main__':

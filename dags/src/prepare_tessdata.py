@@ -6,10 +6,10 @@ from subprocess import list2cmdline
 
 from tqdm import tqdm
 
-from .const import TESSTRAIN_DIR
+from .const import TESSTRAIN_PROJECT_DIR
 
 
-def _run_prepare(name, ground_truth_dir, tesstrain_dir=TESSTRAIN_DIR):
+def _run_prepare(name, ground_truth_dir, tesstrain_dir=TESSTRAIN_PROJECT_DIR):
     with open(os.path.join(ground_truth_dir, f'{name}.box'), "w") as box_file:
         cmd1 = [
             "PYTHONIOENCODING=utf-8", "python3", os.path.join(tesstrain_dir, "generate_line_box.py"),
@@ -29,7 +29,7 @@ def _run_prepare(name, ground_truth_dir, tesstrain_dir=TESSTRAIN_DIR):
     subprocess.run(cmd2, shell=True, text=True)
 
 
-def run_prepare(boxes, ground_truth_dir, tesstrain_dir=TESSTRAIN_DIR, par_factor=4):
+def run_prepare(boxes, ground_truth_dir, tesstrain_dir=TESSTRAIN_PROJECT_DIR, par_factor=4):
     with tqdm(total=len(boxes)) as pbar, ThreadPoolExecutor(max_workers=par_factor) as executor:
         futures = [
             executor.submit(

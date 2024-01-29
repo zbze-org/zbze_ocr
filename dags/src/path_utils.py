@@ -1,6 +1,6 @@
 import os
 
-from .const import TESSTRAIN_DIR, PDF_PROCESSING_RESULT_DIR
+from .const import TESSTRAIN_PROJECT_DIR, PDF_PROCESSING_RESULT_DIR
 
 
 def get_book_base_dir(pdf_name):
@@ -20,7 +20,7 @@ def get_book_lang_tsv_dir(book_base_dir, lang):
 
 
 def get_best_traineddata_dir(model_name):
-    return os.path.join(TESSTRAIN_DIR, 'data', model_name, 'tessdata_best')
+    return os.path.join(TESSTRAIN_PROJECT_DIR, 'data', model_name, 'tessdata_best')
 
 
 def get_compare_results_dir(book_base_dir, lang_1, lang_2):

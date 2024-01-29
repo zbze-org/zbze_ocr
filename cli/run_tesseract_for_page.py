@@ -5,7 +5,7 @@ import click
 from tqdm import tqdm
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TESSERACT_CONFIG = os.path.join(PROJECT_DIR, 'dags', 'src', 'tesseract', 'kdb.base.config.txt')
+TESSERACT_CONFIG = os.path.join(PROJECT_DIR, 'tesseract', 'kdb.base.config.txt')
 
 
 @click.command()
@@ -40,6 +40,7 @@ def run_tesseract_for_page(tesseract_lang, jpg_dir, txt_dir):
         ]
         p = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, err = p.communicate()
+        print(f'output: {output} err: {err}')
 
 
 if __name__ == '__main__':

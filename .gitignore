@@ -3,6 +3,6 @@ airflow-worker.pid
 airflow-webserver.pid
 data/pdfs/
 data/dag_results/
-data/tesstrain/kbd/fonts/
-data/tesstrain/kbd/train_data/input/.txt
+tesseract/tesstrain/kbd/fonts/
+tesseract/tesstrain/kbd/train_data/input/.txt
 .idea
