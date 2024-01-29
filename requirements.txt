@@ -21,4 +21,7 @@ apache-airflow-client
 # for cli commands
 click
 opencv-python~=4.8.0.74
+pytesseract
 # cli commands end
+
+pysnooper

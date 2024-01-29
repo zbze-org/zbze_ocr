@@ -36,8 +36,8 @@ def get_files_to_process(input_file_path=None, input_dir=None, file_mask='*.jpg'
 
 
 def generic_file_processor(process_function, files, output_dir=None, description_prefix='', **kwargs):
-    progress_bar = tqdm(files, desc='Processing', unit='file')
-    for file_path in progress_bar:
+    progress_bar = tqdm(sorted(files), desc='Processing', unit='file')
+    for index, file_path in enumerate(progress_bar):
         path, file_name = os.path.split(file_path)
         progress_bar.set_description(f'Processing with {process_function.__name__} {description_prefix}: {file_name}')
 
@@ -46,4 +46,4 @@ def generic_file_processor(process_function, files, output_dir=None, description
             output_dir = file_path[:-len(ext) - 1]
 
         os.makedirs(output_dir, exist_ok=True)
-        process_function(file_path=file_path, output_dir=output_dir, **kwargs)
+        process_function(file_path=file_path, output_dir=output_dir, page=index, **kwargs)
