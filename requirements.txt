@@ -25,3 +25,6 @@ pytesseract
 # cli commands end
 
 pysnooper
+
+black[jupyter]
+isort
