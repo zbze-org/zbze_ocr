@@ -4,10 +4,10 @@ import os.path
 import cv2
 import numpy as np
 
-from .cv.modifications import apply_gaussian_blur_and_threshold
-from .cv.drawing import fill_contours_on_image
 from .cv.detectors import find_outliers_contours_on_image
+from .cv.drawing import fill_contours_on_image
 from .cv.io import load_grayscale_image, save_image
+from .cv.modifications import apply_gaussian_blur_and_threshold
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def smooth_contours(file_path, output_dir, debug=True):
 
     base_name = os.path.basename(file_path)
     name, ext = os.path.splitext(base_name)
-    smoothed_img_path = os.path.join(output_dir, f'{name}_smoothed{ext}')
+    smoothed_img_path = os.path.join(output_dir, f"{name}_smoothed{ext}")
 
     save_image(output_image, filepath=smoothed_img_path)
     return smoothed_img_path

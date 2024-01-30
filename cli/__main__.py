@@ -1,18 +1,19 @@
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import click
 
 from cli import (
-    split_pdf_to_jpeg,
-    split_book_layout,
-    rotate_img,
-    smooth_img,
     apply_img_filters,
-    run_tesseract_for_page,
-    ocr_text_diff,
     box_processing,
+    ocr_text_diff,
+    rotate_img,
+    run_tesseract_for_page,
+    smooth_img,
+    split_book_layout,
+    split_pdf_to_jpeg,
 )
 
 
@@ -30,5 +31,5 @@ cli.add_command(run_tesseract_for_page.run_tesseract_for_page)
 cli.add_command(ocr_text_diff.compare_texts)
 cli.add_command(box_processing.box_processing)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

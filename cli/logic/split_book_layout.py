@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 
 from .cv.detectors import detect_edges, detect_lines, find_center_line
-from .cv.filters import filter_vertical_lines, filter_lines_near_center
+from .cv.filters import filter_lines_near_center, filter_vertical_lines
 from .cv.io import load_image, save_image
 from .cv.modifications import convert_to_grayscale, split_image
 
@@ -12,20 +12,20 @@ def plot_images(original, detected_line, left, right):
     plt.figure(figsize=(20, 10))
 
     plt.subplot(1, 3, 1)
-    plt.imshow(original, cmap='gray')
-    plt.title('Original Image')
+    plt.imshow(original, cmap="gray")
+    plt.title("Original Image")
 
     plt.subplot(1, 3, 2)
-    plt.imshow(detected_line, cmap='gray')
-    plt.title('Detected Line')
+    plt.imshow(detected_line, cmap="gray")
+    plt.title("Detected Line")
 
     plt.subplot(2, 3, 3)
-    plt.imshow(left, cmap='gray')
-    plt.title('Left Part')
+    plt.imshow(left, cmap="gray")
+    plt.title("Left Part")
 
     plt.subplot(2, 3, 6)
-    plt.imshow(right, cmap='gray')
-    plt.title('Right Part')
+    plt.imshow(right, cmap="gray")
+    plt.title("Right Part")
 
     plt.show()
 
@@ -58,8 +58,8 @@ def split_book_processing(file_path, output_dir=None, plot=False):
     # Split the image into a left and right part based on the center line
     left_img, right_img = split_image(img, center_line)
 
-    left_img_path = os.path.join(output_dir, f'{name}_left{ext}')
-    right_img_path = os.path.join(output_dir, f'{name}_right{ext}')
+    left_img_path = os.path.join(output_dir, f"{name}_left{ext}")
+    right_img_path = os.path.join(output_dir, f"{name}_right{ext}")
     save_image(left_img, filepath=left_img_path)
     save_image(right_img, filepath=right_img_path)
 
@@ -69,7 +69,9 @@ def split_book_processing(file_path, output_dir=None, plot=False):
 
 if __name__ == "__main__":
     # Путь к файлу изображения
-    IMG_FILEPATH = '/Users/panagoa/PycharmProjects/zbze-nlp/notebooks/ocr/pdf_test/Къалэмбий_Адыгэ_хъыбархэр_1978/Къалэмбий_Адыгэ_хъыбархэр_1978-05.jpg'
+    IMG_FILEPATH = "/Users/panagoa/PycharmProjects/zbze-nlp/notebooks/ocr/pdf_test/Къалэмбий_Адыгэ_хъыбархэр_1978/Къалэмбий_Адыгэ_хъыбархэр_1978-05.jpg"
 
-    split_book_processing(IMG_FILEPATH,
-                          output_dir='/Users/panagoa/PycharmProjects/zbze-nlp/notebooks/ocr/pdf_test/Къалэмбий_Адыгэ_хъыбархэр_1978/')
+    split_book_processing(
+        IMG_FILEPATH,
+        output_dir="/Users/panagoa/PycharmProjects/zbze-nlp/notebooks/ocr/pdf_test/Къалэмбий_Адыгэ_хъыбархэр_1978/",
+    )

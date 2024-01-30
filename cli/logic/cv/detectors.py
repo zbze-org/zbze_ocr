@@ -12,10 +12,14 @@ def detect_edges(gray_image, blur_size=const.GAUSSIAN_BLUR_SIZE):
 
 
 def detect_lines(edges):
-    lines = cv2.HoughLinesP(edges, const.HOUGH_LINES_RHO, const.HOUGH_LINES_THETA,
-                            threshold=const.HOUGH_LINES_THRESHOLD,
-                            minLineLength=const.HOUGH_LINES_MIN_LENGTH,
-                            maxLineGap=const.HOUGH_LINES_MAX_GAP)
+    lines = cv2.HoughLinesP(
+        edges,
+        const.HOUGH_LINES_RHO,
+        const.HOUGH_LINES_THETA,
+        threshold=const.HOUGH_LINES_THRESHOLD,
+        minLineLength=const.HOUGH_LINES_MIN_LENGTH,
+        maxLineGap=const.HOUGH_LINES_MAX_GAP,
+    )
     return lines
 
 
@@ -37,9 +41,11 @@ def find_contours(image):
 
 def find_primary_contour(image):
     contours = find_contours(image)
-    primary_contours = filter_largest_contours(contours,
-                                               area_threshold=const.CONTOUR_AREA_THRESHOLD,
-                                               largest_limit_count=const.NUM_LARGEST_CONTOURS)
+    primary_contours = filter_largest_contours(
+        contours,
+        area_threshold=const.CONTOUR_AREA_THRESHOLD,
+        largest_limit_count=const.NUM_LARGEST_CONTOURS,
+    )
     return primary_contours[0] if primary_contours else None
 
 

@@ -1,7 +1,7 @@
 import os
 
-from PIL import Image
 from django.test import TestCase
+from PIL import Image
 
 from cli.logic.apply_img_filters import GroupEnum, save_original_image
 from cli.logic.base import convert_to_grayscale

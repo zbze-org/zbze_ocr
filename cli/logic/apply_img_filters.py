@@ -3,7 +3,7 @@ from enum import Enum
 
 from PIL import Image
 
-from .cv.modifications import convert_to_grayscale, apply_enhancement
+from .cv.modifications import apply_enhancement, convert_to_grayscale
 
 
 class GroupEnum(Enum):
@@ -23,7 +23,7 @@ def save_image_debug_step(output_dir, file_name, processed_images):
         processed_image.save(
             os.path.join(
                 output_dir,
-                f'{index:02d}_p_{step_name.lower()}_{step_factor}_{file_name}'
+                f"{index:02d}_p_{step_name.lower()}_{step_factor}_{file_name}",
             )
         )
 
@@ -38,15 +38,18 @@ def create_output_file_path(output_dir, steps_to_name_prefix, file_name, group_s
         os.makedirs(subdir, exist_ok=True)
         output_file_path = os.path.join(subdir, f'{steps_to_name_prefix}.{file_name.split(".")[-1]}')
     else:
-        output_file_path = os.path.join(
-            output_dir,
-            f'{steps_to_name_prefix}.{file_name}'
-        )
+        output_file_path = os.path.join(output_dir, f"{steps_to_name_prefix}.{file_name}")
     return output_file_path
 
 
-def apply_image_filters(file_path, output_dir, processing_steps=None, group_steps=GroupEnum.NONE, debug=False,
-                        **kwargs):
+def apply_image_filters(
+    file_path,
+    output_dir,
+    processing_steps=None,
+    group_steps=GroupEnum.NONE,
+    debug=False,
+    **kwargs,
+):
     path, file_name = os.path.split(file_path)
     os.makedirs(output_dir, exist_ok=True)
 
@@ -54,11 +57,7 @@ def apply_image_filters(file_path, output_dir, processing_steps=None, group_step
     image = convert_to_grayscale(image)
 
     if not processing_steps:
-        processing_steps = [
-            ("Contrast", 1.0),
-            ("Brightness", 1.0),
-            ("Sharpness", 1.0)
-        ]
+        processing_steps = [("Contrast", 1.0), ("Brightness", 1.0), ("Sharpness", 1.0)]
 
     processed_images = []
 
@@ -68,11 +67,11 @@ def apply_image_filters(file_path, output_dir, processing_steps=None, group_step
         image = processed_image
 
     if debug:
-        debug_dir = f'{output_dir}__debug'
+        debug_dir = f"{output_dir}__debug"
         os.makedirs(debug_dir, exist_ok=True)
         save_image_debug_step(debug_dir, file_name, processed_images)
 
-    steps_to_name_prefix = '__'.join([f'{p[0]}{c}' for p, c in processing_steps])
+    steps_to_name_prefix = "__".join([f"{p[0]}{c}" for p, c in processing_steps])
     output_file_path = create_output_file_path(output_dir, steps_to_name_prefix, file_name, group_steps)
     image.save(output_file_path)
 

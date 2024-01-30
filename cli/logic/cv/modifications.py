@@ -58,5 +58,5 @@ def apply_enhancement(image, enhancement_name, enhancement_factor):
 
 def apply_rotate(orig_image, rotation_matrix, rect):
     rotated_image = cv2.warpAffine(orig_image, rotation_matrix, orig_image.shape[1::-1], flags=cv2.INTER_LINEAR)
-    rotated_box = cv2.boxPoints(rect).astype('int')
+    rotated_box = cv2.boxPoints(rect).astype("int")
     return rotated_image, rotated_box

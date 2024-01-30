@@ -1,14 +1,15 @@
-import click
-from difflib import Differ, HtmlDiff
+import glob
 import itertools
 import os
-import glob
+from difflib import Differ, HtmlDiff
+
+import click
 
 
 @click.command()
-@click.option('--directory', '-d', default='.', help='Directory path containing the files')
-@click.option('--output-dir', '-o', default=None, help='Output directory path for the HTML file')
-@click.option('--file-mask', '-m', default='*.txt', help='File mask for selecting files')
+@click.option("--directory", "-d", default=".", help="Directory path containing the files")
+@click.option("--output-dir", "-o", default=None, help="Output directory path for the HTML file")
+@click.option("--file-mask", "-m", default="*.txt", help="File mask for selecting files")
 def compare_texts(directory, output_dir, file_mask):
     texts = []
     path = os.path.join(os.getcwd(), directory)
@@ -24,13 +25,13 @@ def compare_texts(directory, output_dir, file_mask):
 
     d = Differ()
     html_diff = HtmlDiff()
-    merged_text = ''
+    merged_text = ""
     different_words = []
 
     for (text_1, n1), (text_2, n2) in text_combi:
         diff = list(d.compare(text_1.split(), text_2.split()))
         for word_diff in diff:
-            if word_diff.startswith('- ') or word_diff.startswith('+ '):
+            if word_diff.startswith("- ") or word_diff.startswith("+ "):
                 word = word_diff[2:]
                 different_words.append(word)
 
@@ -41,16 +42,16 @@ def compare_texts(directory, output_dir, file_mask):
             todesc=n2,
             context=True,
         )
-        merged_text += ''
+        merged_text += ""
 
     if output_dir is None:
         output_dir = directory
 
     output_path = os.path.join(os.getcwd(), output_dir)
-    output_file = os.path.join(output_path, 'merged_diff.html')
-    with open(output_file, 'w', encoding='utf-8') as file:
+    output_file = os.path.join(output_path, "merged_diff.html")
+    with open(output_file, "w", encoding="utf-8") as file:
         file.write(merged_text)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     compare_texts()

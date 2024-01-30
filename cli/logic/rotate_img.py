@@ -3,10 +3,10 @@ import os
 import cv2
 import matplotlib.pyplot as plt
 
-from .cv.detectors import find_primary_contour, determine_rotation_angle
-from .cv.drawing import draw_contours_on_image, draw_circle_on_image
+from .cv.detectors import determine_rotation_angle, find_primary_contour
+from .cv.drawing import draw_circle_on_image, draw_contours_on_image
 from .cv.io import load_image, save_image
-from .cv.modifications import convert_to_grayscale, apply_gaussian_blur_and_threshold, apply_rotate
+from .cv.modifications import apply_gaussian_blur_and_threshold, apply_rotate, convert_to_grayscale
 
 ROTATE_GAUSSIAN_BLUR_SIZE = (51, 51)
 
@@ -22,7 +22,7 @@ def draw_contour(image, box):
     contour_color = (255, 0, 0)  # Контур: Синий
     circle_color = (0, 255, 0)  # Круги: Зеленый
     draw_contours_on_image(image, [box], color=contour_color, thickness=5)
-    for (x, y) in box:
+    for x, y in box:
         draw_circle_on_image(image, (x, y), 10, color=circle_color, thickness=5, inplace=True)
 
 
@@ -42,8 +42,9 @@ def draw_lines(image, box):
 
 def rotate_image(file_path, output_dir, plot=False):
     image = load_image(file_path)
-    blurred_image, binary_image = apply_gaussian_blur_and_threshold(gray_image=convert_to_grayscale(image),
-                                                                    blur_size=ROTATE_GAUSSIAN_BLUR_SIZE)
+    blurred_image, binary_image = apply_gaussian_blur_and_threshold(
+        gray_image=convert_to_grayscale(image), blur_size=ROTATE_GAUSSIAN_BLUR_SIZE
+    )
     primary_contour = find_primary_contour(binary_image)
 
     if primary_contour is not None:
@@ -56,21 +57,21 @@ def rotate_image(file_path, output_dir, plot=False):
 
         base_name = os.path.basename(file_path)
         name, ext = os.path.splitext(base_name)
-        rotated_img_path = os.path.join(output_dir, f'{name}_rotated{ext}')
+        rotated_img_path = os.path.join(output_dir, f"{name}_rotated{ext}")
 
         save_image(rotated_image, filepath=rotated_img_path)
         return rotated_image
 
 
 def show_image(subplot, title, image):
-    subplot.imshow(image, cmap='gray')
+    subplot.imshow(image, cmap="gray")
     subplot.set_title(title)
 
 
 def show_rotation_steps(original, blur, rotated, drawn):
     fig, axs = plt.subplots(1, 4, figsize=(20, 20))
-    show_image(axs[0], 'Исходное изображение', original)
-    show_image(axs[1], 'Бинаризация и размытие', blur)
-    show_image(axs[2], 'Повернутое изображение', rotated)
-    show_image(axs[3], 'Повернутое изображение с линиями', drawn)
+    show_image(axs[0], "Исходное изображение", original)
+    show_image(axs[1], "Бинаризация и размытие", blur)
+    show_image(axs[2], "Повернутое изображение", rotated)
+    show_image(axs[3], "Повернутое изображение с линиями", drawn)
     plt.show()
