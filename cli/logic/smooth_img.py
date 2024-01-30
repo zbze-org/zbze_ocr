@@ -27,7 +27,6 @@ SMOOTH_GAUSSIAN_BLUR_SIZE = (21, 5)
 #     save_image(output_image, filepath=os.path.join(debug_dir, f'04_f_output_image.{ext}'))
 
 
-# @pysnooper.snoop()
 def smooth_contours(file_path, output_dir, debug=True):
     gray_image = load_grayscale_image(file_path)
     _, binary_image = apply_gaussian_blur_and_threshold(gray_image=gray_image, blur_size=SMOOTH_GAUSSIAN_BLUR_SIZE)

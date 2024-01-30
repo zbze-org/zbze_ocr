@@ -30,7 +30,6 @@ def plot_images(original, detected_line, left, right):
     plt.show()
 
 
-# @pysnooper.snoop(watch=['center_line', 'left_img_path', 'right_img_path'])
 def split_book_processing(file_path, output_dir=None, plot=False):
     # Save the left and right images
     base_name = os.path.basename(file_path)
