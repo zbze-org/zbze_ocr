@@ -16,8 +16,8 @@ def _get_text_by_lang(book_lang_txt_dir):
 
 
 def _extract_diff_words(line_1, line_2):
-    line_1 = re.sub(r'[^\w\s]', '', line_1)
-    line_2 = re.sub(r'[^\w\s]', '', line_2)
+    line_1 = re.sub(r"[^\w\s]", "", line_1)
+    line_2 = re.sub(r"[^\w\s]", "", line_2)
 
     words1 = line_1.split()
     words2 = line_2.split()
@@ -32,8 +32,8 @@ def _extract_diff_words(line_1, line_2):
     start2 = 0
 
     for block in match:
-        different_words_1.extend(words1[start1:block.a])
-        different_words_2.extend(words2[start2:block.b])
+        different_words_1.extend(words1[start1 : block.a])
+        different_words_2.extend(words2[start2 : block.b])
 
         start1 = block.a + block.size
         start2 = block.b + block.size
@@ -68,7 +68,7 @@ def get_diff_word(book_lang_1_txt_dir, book_lang_2_txt_dir, lang_1, lang_2, outp
         book_lang_1_txt_dir=book_lang_1_txt_dir,
         book_lang_2_txt_dir=book_lang_2_txt_dir,
     )
-    df = pd.DataFrame([{lang_1: ' '.join(w1), lang_2: ' '.join(w2)} for w1, w2 in zip(diff_words_1, diff_words_2)])
-    df = df[df[lang_1] != ''][df[lang_2] != '']
+    df = pd.DataFrame([{lang_1: " ".join(w1), lang_2: " ".join(w2)} for w1, w2 in zip(diff_words_1, diff_words_2)])
+    df = df[df[lang_1] != ""][df[lang_2] != ""]
     df.to_csv(output_file, index=False)
     return df

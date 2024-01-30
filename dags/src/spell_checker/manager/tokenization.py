@@ -3,9 +3,7 @@ from tokenizers import Tokenizer
 
 class TokenizerManager:
     def __init__(self, tokenizer_paths):
-        self.tokenizers = {
-            name: Tokenizer.from_file(path) for name, path in tokenizer_paths.items()
-        }
+        self.tokenizers = {name: Tokenizer.from_file(path) for name, path in tokenizer_paths.items()}
 
     def get_tokenizer(self, tokenizer_name):
         return self.tokenizers.get(tokenizer_name)
@@ -16,9 +14,7 @@ class TokenizerManager:
 
 
 def char_len_tokens(word, tokenizer):
-    toke_len_hash = "".join(
-        [str(len(token)) for token in tokenizer.encode(word).tokens]
-    )
+    toke_len_hash = "".join([str(len(token)) for token in tokenizer.encode(word).tokens])
     return toke_len_hash
 
 

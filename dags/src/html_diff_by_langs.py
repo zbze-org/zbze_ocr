@@ -15,12 +15,8 @@ def _get_text_by_lang(book_lang_txt_dir):
 def create_html_diff_by_lang(book_base_dir, lang_1, lang_2, output_file):
     html_diff = HtmlDiff()
 
-    lang_1_text_by_page = _get_text_by_lang(
-        book_lang_txt_dir=os.path.join(book_base_dir, f"rslt_{lang_1}", "txts")
-    )
-    lang_2_text_by_page = _get_text_by_lang(
-        book_lang_txt_dir=os.path.join(book_base_dir, f"rslt_{lang_2}", "txts")
-    )
+    lang_1_text_by_page = _get_text_by_lang(book_lang_txt_dir=os.path.join(book_base_dir, f"rslt_{lang_1}", "txts"))
+    lang_2_text_by_page = _get_text_by_lang(book_lang_txt_dir=os.path.join(book_base_dir, f"rslt_{lang_2}", "txts"))
 
     merged_text = ""
     for page_i in range(len(lang_2_text_by_page)):
@@ -41,7 +37,5 @@ if __name__ == "__main__":
     _book_base_dir = "../data/dag_results/pdf_processing/dysche_zhyg.pdf"
     _lang_1 = "kbd_0.229_2995_10800"
     _lang_2 = "kbd_0.009_4360_66700"
-    _output_file = os.path.join(
-        _book_base_dir, f"merged_diff_{_lang_1}_vs_{_lang_2}.html"
-    )
+    _output_file = os.path.join(_book_base_dir, f"merged_diff_{_lang_1}_vs_{_lang_2}.html")
     create_html_diff_by_lang(_book_base_dir, _lang_1, _lang_2, _output_file)

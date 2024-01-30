@@ -12,7 +12,7 @@ from .const import FONT_SIZE, TEXT_LINES_MAX_COUNT
 
 
 def calculate_image_size(text, img_font):
-    temp_image = Image.new('RGB', (1, 1), color=(255, 255, 255))
+    temp_image = Image.new("RGB", (1, 1), color=(255, 255, 255))
     temp_draw = ImageDraw.Draw(temp_image)
 
     text_bbox = temp_draw.textbbox((0, 0), text, font=img_font)
@@ -25,14 +25,14 @@ def calculate_image_size(text, img_font):
 def draw_text(text, img_font, background=(255, 255, 255)):
     padding = img_font.size // 2
     text_width, text_height = calculate_image_size(text, img_font)
-    image = Image.new('RGB', (text_width + padding, text_height + padding), color=background)
+    image = Image.new("RGB", (text_width + padding, text_height + padding), color=background)
     draw = ImageDraw.Draw(image)
     draw.text((0, -img_font.size / 10), text, font=img_font, fill=(0, 0, 0))
     return image
 
 
 def apply_aging_effect(image, aging_factor=(0.5, 0.1, 0.005)):
-    image = image.convert('L')
+    image = image.convert("L")
     black_factor, gray_factor, white_factor = aging_factor
 
     pixel_data = list(image.getdata())
@@ -59,10 +59,10 @@ def apply_aging_effect(image, aging_factor=(0.5, 0.1, 0.005)):
 
 
 def generate_file_name(text, img_font):
-    text_md5 = hashlib.md5(text.encode('utf-8')).hexdigest()
-    font_name = img_font.path.split('/')[-1].split('.')[0]
-    font_md5 = hashlib.md5(font_name.encode('utf-8')).hexdigest()
-    return f'{font_md5}_{text_md5}', font_name, text_md5
+    text_md5 = hashlib.md5(text.encode("utf-8")).hexdigest()
+    font_name = img_font.path.split("/")[-1].split(".")[0]
+    font_md5 = hashlib.md5(font_name.encode("utf-8")).hexdigest()
+    return f"{font_md5}_{text_md5}", font_name, text_md5
 
 
 class GroupByEnum(Enum):
@@ -77,51 +77,56 @@ class AgeingFactorEnum(Enum):
     HIGH = (0.5, 0.4, 0.05)
 
 
-def generate_image(text, img_font, output_dir, group_by=GroupByEnum.NO_GROUP, group_by_factor=0,
-                   aging_factor=(0.3, 0.3, 0.01),
-                   ):
+def generate_image(
+    text,
+    img_font,
+    output_dir,
+    group_by=GroupByEnum.NO_GROUP,
+    group_by_factor=0,
+    aging_factor=(0.3, 0.3, 0.01),
+):
     file_name, font_name, text_name = generate_file_name(text, img_font)
 
     if group_by == GroupByEnum.FONT:
-        prefix_dir = f'by_font/{font_name}'
+        prefix_dir = f"by_font/{font_name}"
     elif group_by == GroupByEnum.TEXT:
         if group_by_factor == 0:
-            prefix_dir = f'by_text/{text_name[0]}'
+            prefix_dir = f"by_text/{text_name[0]}"
         else:
             prefix_dir = str(int(text_name[0], 16) % group_by_factor)
     else:
-        prefix_dir = ''
+        prefix_dir = ""
 
     os.makedirs(os.path.join(output_dir, prefix_dir), exist_ok=True)
-    if os.path.exists(os.path.join(output_dir, prefix_dir, f'{file_name}.png')):
+    if os.path.exists(os.path.join(output_dir, prefix_dir, f"{file_name}.png")):
         return
 
     image = draw_text(text, img_font)
     image = apply_aging_effect(image, aging_factor)
-    image.save(os.path.join(output_dir, prefix_dir, f'{file_name}.png'))
-    with open(os.path.join(output_dir, prefix_dir, f'{file_name}.gt.txt'), 'w') as f:
+    image.save(os.path.join(output_dir, prefix_dir, f"{file_name}.png"))
+    with open(os.path.join(output_dir, prefix_dir, f"{file_name}.gt.txt"), "w") as f:
         f.write(text)
 
     return os.path.join(output_dir, prefix_dir)
 
 
 def load_fonts(font_dir, font_size=FONT_SIZE):
-    fonts_files = [f'{font_dir}/{font}' for font in sorted(os.listdir(font_dir)) if font.endswith('.ttf')]
+    fonts_files = [f"{font_dir}/{font}" for font in sorted(os.listdir(font_dir)) if font.endswith(".ttf")]
     fonts = []
     for font_f in fonts_files:
         try:
             img_font = ImageFont.truetype(font_f, font_size)
             fonts.append(img_font)
         except OSError:
-            print(f'Error loading font {font_f}')
+            print(f"Error loading font {font_f}")
             continue
 
     return fonts
 
 
 def load_text(text_filepath, max_lines=TEXT_LINES_MAX_COUNT, min_line_len=20, max_line_len=120):
-    with open(text_filepath, 'r') as f:
-        lines = f.read().split('\n')
+    with open(text_filepath, "r") as f:
+        lines = f.read().split("\n")
 
     text_lines = list(set([line for line in lines if min_line_len < len(line) < max_line_len]))
     text_lines = text_lines[:max_lines]
@@ -129,8 +134,17 @@ def load_text(text_filepath, max_lines=TEXT_LINES_MAX_COUNT, min_line_len=20, ma
     return text_lines
 
 
-def generate_images(text_filepath, font_dir, output_dir, font_size=FONT_SIZE, max_lines=TEXT_LINES_MAX_COUNT,
-                    par_factor=4, group_by=GroupByEnum.NO_GROUP, group_by_factor=0, font_per_line=5):
+def generate_images(
+    text_filepath,
+    font_dir,
+    output_dir,
+    font_size=FONT_SIZE,
+    max_lines=TEXT_LINES_MAX_COUNT,
+    par_factor=4,
+    group_by=GroupByEnum.NO_GROUP,
+    group_by_factor=0,
+    font_per_line=5,
+):
     text_lines = load_text(text_filepath, max_lines=max_lines)
     fonts = load_fonts(font_dir, font_size=font_size)
 

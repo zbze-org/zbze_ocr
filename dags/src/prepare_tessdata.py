@@ -10,11 +10,15 @@ from .const import TESSTRAIN_PROJECT_DIR
 
 
 def _run_prepare(name, ground_truth_dir, tesstrain_dir=TESSTRAIN_PROJECT_DIR):
-    with open(os.path.join(ground_truth_dir, f'{name}.box'), "w") as box_file:
+    with open(os.path.join(ground_truth_dir, f"{name}.box"), "w") as box_file:
         cmd1 = [
-            "PYTHONIOENCODING=utf-8", "python3", os.path.join(tesstrain_dir, "generate_line_box.py"),
-            "-i", os.path.join(ground_truth_dir, f'{name}.png'),
-            "-t", os.path.join(ground_truth_dir, f'{name}.gt.txt'),
+            "PYTHONIOENCODING=utf-8",
+            "python3",
+            os.path.join(tesstrain_dir, "generate_line_box.py"),
+            "-i",
+            os.path.join(ground_truth_dir, f"{name}.png"),
+            "-t",
+            os.path.join(ground_truth_dir, f"{name}.gt.txt"),
         ]
         cmd1 = list2cmdline(cmd1)
         subprocess.run(cmd1, shell=True, stdout=box_file, text=True)
@@ -23,7 +27,9 @@ def _run_prepare(name, ground_truth_dir, tesstrain_dir=TESSTRAIN_PROJECT_DIR):
         "tesseract",
         os.path.join(ground_truth_dir, f"{name}.png"),
         os.path.join(ground_truth_dir, f"{name}"),
-        "--psm", "13", "lstm.train"
+        "--psm",
+        "13",
+        "lstm.train",
     ]
     cmd2 = list2cmdline(cmd2)
     subprocess.run(cmd2, shell=True, text=True)
@@ -52,14 +58,10 @@ def run_prepare(boxes, ground_truth_dir, tesstrain_dir=TESSTRAIN_PROJECT_DIR, pa
 
 
 def get_wo_boxes(ground_truth_dir):
-    png = [f for f in os.listdir(ground_truth_dir) if f.endswith('.png')]
-    lstmf = [f for f in os.listdir(ground_truth_dir) if f.endswith('.lstmf')]
+    png = [f for f in os.listdir(ground_truth_dir) if f.endswith(".png")]
+    lstmf = [f for f in os.listdir(ground_truth_dir) if f.endswith(".lstmf")]
 
-    wo_boxes = set(
-        [f.replace('.png', '') for f in png]
-    ).difference(
-        [f.replace('.lstmf', '') for f in lstmf]
-    )
+    wo_boxes = set([f.replace(".png", "") for f in png]).difference([f.replace(".lstmf", "") for f in lstmf])
     return wo_boxes
 
 
