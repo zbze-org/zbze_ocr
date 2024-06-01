@@ -1,5 +1,7 @@
 import logging
 import os.path
+import shlex
+import subprocess
 
 import cv2
 import numpy as np
@@ -27,7 +29,7 @@ SMOOTH_GAUSSIAN_BLUR_SIZE = (21, 5)
 #     save_image(output_image, filepath=os.path.join(debug_dir, f'04_f_output_image.{ext}'))
 
 
-def smooth_contours(file_path, output_dir, debug=True):
+def smooth_contours(file_path, output_dir, debug=True, **kwargs):
     gray_image = load_grayscale_image(file_path)
     _, binary_image = apply_gaussian_blur_and_threshold(gray_image=gray_image, blur_size=SMOOTH_GAUSSIAN_BLUR_SIZE)
     outliers_contours = find_outliers_contours_on_image(binary_image)
@@ -45,3 +47,56 @@ def smooth_contours(file_path, output_dir, debug=True):
 
     save_image(output_image, filepath=smoothed_img_path)
     return smoothed_img_path
+
+
+def unpaper_processing(file_path, output_dir, debug=False, **kwargs):
+    p = subprocess.Popen(
+        shlex.split(
+            f"convert -density 300 -resize 2481x3507 -depth 8 -colorspace Gray -sharpen 0x2.7 "
+            f"{file_path} {file_path}"
+        ),
+        stdout=subprocess.PIPE,
+    )
+    out, err = p.communicate()
+    if p.returncode != 0:
+        log.error(f"Error during convert command execution: {err}")
+        raise Exception(f"Error during convert command execution: {err}")
+
+    p = subprocess.Popen(
+        shlex.split(
+            f"convert -black-threshold 35% -white-threshold 75% "
+            f"{file_path} {file_path}.pnm"
+        ),
+        stdout=subprocess.PIPE,
+    )
+    out, err = p.communicate()
+    if p.returncode != 0:
+        log.error(f"Error during convert command execution: {err}")
+        raise Exception(f"Error during convert command execution: {err}")
+
+    # unpaper --layout single
+    p = subprocess.Popen(
+        shlex.split(
+            f"unpaper --layout single --black-threshold 0.1 -ni 8 {file_path}.pnm {file_path}.unpaper.pnm"
+        ),
+        stdout=subprocess.PIPE,
+    )
+    out, err = p.communicate()
+    if p.returncode != 0:
+        log.error(f"Error during unpaper command execution: {err}")
+        raise Exception(f"Error during unpaper command execution: {err}")
+
+    # convert pnm to jpg
+    p = subprocess.Popen(
+        shlex.split(
+            f"convert {file_path}.unpaper.pnm {file_path}"
+        ),
+        stdout=subprocess.PIPE,
+    )
+    out, err = p.communicate()
+    if p.returncode != 0:
+        log.error(f"Error during convert command execution: {err}")
+        raise Exception(f"Error during convert command execution: {err}")
+
+    os.remove(f"{file_path}.pnm")
+    os.remove(f"{file_path}.unpaper.pnm")

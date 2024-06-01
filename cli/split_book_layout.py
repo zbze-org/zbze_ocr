@@ -1,5 +1,6 @@
 import click
 
+from logic.smooth_img import unpaper_processing
 from logic.cli_utils import generic_file_processor, get_files_to_process, validate_input_file_path_and_dir_params
 from logic.split_book_layout import split_book_processing
 
@@ -20,6 +21,9 @@ def split_book_layout(input_file_path, input_dir, output_dir, file_mask):
 
     files_to_process = get_files_to_process(input_file_path, input_dir, file_mask)
     generic_file_processor(split_book_processing, files_to_process, output_dir)
+
+    files_to_process = get_files_to_process(input_file_path, output_dir, file_mask)
+    generic_file_processor(unpaper_processing, files_to_process, output_dir)
 
 
 if __name__ == "__main__":

@@ -40,7 +40,7 @@ def draw_lines(image, box):
         cv2.line(image, tuple(box[idx1]), tuple(box[idx2]), color, 2)
 
 
-def rotate_image(file_path, output_dir, plot=False):
+def rotate_image(file_path, output_dir, plot=False, **kwargs):
     image = load_image(file_path)
     blurred_image, binary_image = apply_gaussian_blur_and_threshold(
         gray_image=convert_to_grayscale(image), blur_size=ROTATE_GAUSSIAN_BLUR_SIZE

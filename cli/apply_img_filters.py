@@ -1,5 +1,3 @@
-import itertools
-
 import click
 
 from logic.apply_img_filters import apply_image_filters
@@ -7,8 +5,8 @@ from logic.cli_utils import generic_file_processor, get_files_to_process, valida
 
 DEFAULT_PROCESS_STEPS = [
     ("Brightness", 1.4),
-    ("Contrast", 1.7),
-    ("Sharpness", 1.4),
+    ("Contrast", 1.9),
+    ("Sharpness", 1.7),
 ]
 
 
@@ -23,16 +21,14 @@ def apply_img_filters(input_file_path, input_dir, output_dir, file_mask, group):
         return
 
     files_to_process = get_files_to_process(input_file_path, input_dir, file_mask)
-    process_steps_permutations = list(itertools.permutations(DEFAULT_PROCESS_STEPS))
-    for process_steps_p in process_steps_permutations:
-        generic_file_processor(
-            process_function=apply_image_filters,
-            files=files_to_process,
-            output_dir=output_dir,
-            processing_steps=process_steps_p,
-            description_prefix=" ".join([f"{step[0]} {step[1]}" for step in process_steps_p]),
-            group_steps=group,
-        )
+    generic_file_processor(
+        process_function=apply_image_filters,
+        files=files_to_process,
+        output_dir=output_dir,
+        processing_steps=DEFAULT_PROCESS_STEPS,
+        description_prefix=" ".join([f"{step[0]} {step[1]}" for step in DEFAULT_PROCESS_STEPS]),
+        group_steps=group,
+    )
 
 
 if __name__ == "__main__":

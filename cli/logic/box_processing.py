@@ -96,6 +96,9 @@ def create_cropped_image(image, box_data, output_dir):
         box_data.coordinates.left : box_data.coordinates.left + box_data.coordinates.width,
     ]
 
+    if cropped is None or not cropped.size:
+        return
+
     cv2.imwrite(os.path.join(output_dir, f"{box_data.box_name}.jpg"), cropped)
     with open(os.path.join(output_dir, f"{box_data.box_name}.txt"), "w") as f:
         f.write(box_data.text)

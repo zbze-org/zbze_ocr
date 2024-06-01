@@ -30,7 +30,7 @@ def plot_images(original, detected_line, left, right):
     plt.show()
 
 
-def split_book_processing(file_path, output_dir=None, plot=False):
+def split_book_processing(file_path, output_dir=None, plot=False, **kwargs):
     # Save the left and right images
     base_name = os.path.basename(file_path)
     name, ext = os.path.splitext(base_name)
