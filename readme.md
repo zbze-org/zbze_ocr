@@ -14,11 +14,12 @@ psql -h localhost -p 5432
 CREATE DATABASE zbze_ocr_db;
 CREATE USER zbze_ocr WITH PASSWORD '12345';
 GRANT ALL PRIVILEGES ON DATABASE zbze_ocr_db TO zbze_ocr;
-GRANT ALL PRIVILEGES ON DATABASE zbze_ocr_db TO zbze_ocr;
 GRANT ALL ON SCHEMA public TO zbze_ocr;
 ```
 
 # Config 
+
+## create airflow.cfg from airflow.cfg.template
 
 ```sh
 echo $(pwd)"/dags"
@@ -46,6 +47,10 @@ executor = CeleryExecutor
 
 ```shell
 export AIRFLOW_HOME=$(echo $(pwd))
+```
+
+```shell
+AIRFLOW_HOME=$(echo $(pwd)) airflow db init
 ```
 
 # run airflow

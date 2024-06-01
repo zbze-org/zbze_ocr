@@ -13,6 +13,7 @@ tokenizers
 pyahocorasick
 marisa-trie
 scikit-learn==1.3.2
+fuzzywuzzy==0.18.0
 # spellchecker end
 
 python-slugify[unidecode]
