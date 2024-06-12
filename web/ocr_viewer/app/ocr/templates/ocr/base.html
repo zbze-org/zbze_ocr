@@ -1,0 +1,50 @@
+{% load render_table from django_tables2 %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    {% endblock %}
+</head>
+
+
+<body>
+{% block header %}
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">OCR Viewer</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'ocr_project_list' %}">Projects</a></li>
+            </ul>
+
+            {% if prev_url or next_url %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ prev_url }}"> <span class="glyphicon glyphicon-chevron-left"></span> Previous</a>
+                    </li>
+                    <li><a href="{{ next_url }}"> Next <span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            {% endif %}
+        </div>
+    </nav>
+{% endblock %}
+
+{% block breadcrumb %}
+
+{% endblock %}
+
+
+<div class="col-sm-12 col-md-12">
+    {% block content %}
+        {% render_table table %}
+    {% endblock %}
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,438 @@
+{% load static %}
+
+<style>
+    .clickable-line-number {
+        cursor: pointer;
+        user-select: none;
+    }
+</style>
+
+<script>const require = {paths: {vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs'}};</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs/loader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs/editor/editor.main.nls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs/editor/editor.main.js"></script>
+
+<div class="row">
+    <div class="col-md-6">
+        <label for="leftVersionSelect"></label><select class="form-control" id="leftVersionSelect"></select>
+    </div>
+    <div class="col-md-6">
+        <label for="rightVersionSelect"></label><select class="form-control" id="rightVersionSelect"></select>
+    </div>
+</div>
+<div class="row"></div>
+<div id="container" style="width: 100%; height: 550px; padding-top: 30px; padding-bottom: 30px"></div>
+
+
+<script type="text/javascript">
+    const ocrPageId = {{ocr_page.id}};
+    const ocrPageTextId = {{ocr_page_text.id}};
+
+    const urlGetSuggestions = '/api/ocr/get_suggestions';
+    const urlGetWordInfo = '/api/ocr/get_word_info/';
+    const urlSpellCheck = '/api/ocr/spell_check/';
+    const urlSaveModifiedText = '/api/ocr_page_text/{{ocr_page_text.id}}/update_text/';
+
+    const urlGetVersions = '/api/ocr_page_text/{{ocr_page_text.id}}/history_list/';
+    const urlGetVersionContent = '/api/ocr_page_text/{{ocr_page_text.id}}/history_detail/';
+
+    const leftVersionSelect = document.getElementById('leftVersionSelect');
+    const rightVersionSelect = document.getElementById('rightVersionSelect');
+
+    async function fetchVersions() {
+        try {
+            const response = await fetch(urlGetVersions);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("There has been a problem with your fetch operation:", error);
+            return [];
+        }
+    }
+
+    async function fetchVersionContent(versionId) {
+        try {
+            const response = await fetch(`${urlGetVersionContent}${versionId}/`);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("There has been a problem with your fetch operation:", error);
+            return "";
+        }
+    }
+
+    function fillVersionsSelect(versions) {
+        console.log('fillVersionsSelect versions', versions.length);
+
+        leftVersionSelect.innerHTML = '';
+        rightVersionSelect.innerHTML = '';
+
+        versions.forEach(version => {
+            const option = document.createElement('option');
+            option.value = version.history_id;
+            option.textContent = version.history_id + " " + version.updated_at;
+
+            leftVersionSelect.appendChild(option.cloneNode(true));
+            rightVersionSelect.appendChild(option);
+        });
+    }
+
+    fetchVersions()
+        .then(versions => {
+            fillVersionsSelect(versions);
+        })
+        .catch(error => {
+            // Обработка ошибки
+        });
+</script>
+
+<script type="text/javascript">
+    async function saveModifiedText(text) {
+        let data = {
+            'text': text
+        };
+
+        try {
+            const response = await fetch(urlSaveModifiedText, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            return response
+        } catch (error) {
+            console.error("There has been a problem with your fetch operation:", error);
+            return [];
+        }
+    }
+
+    async function getSuggestions(word, range) {
+        let url = urlGetSuggestions + '?word=' + word;
+        let responseData = [];
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            responseData = await response.json();
+        } catch (error) {
+            console.error("There has been a problem with your fetch operation:", error);
+        }
+        console.log(responseData)
+
+        return responseData.map(function (suggestion) {
+            return {
+                label: suggestion.word,
+                kind: monaco.languages.CompletionItemKind.Text,
+                insertText: suggestion.word,
+                range: range,
+            };
+        });
+    }
+
+    async function getSuggestionsFromText(text, range) {
+        text = text.replace(/-\n/g, "");
+        let wordsInText = text.match(/[\p{L}\p{N}]+/ug) || [];
+        wordsInText = Array.from(new Set(wordsInText));
+
+        return wordsInText.map(function (existingWord) {
+            return {
+                label: existingWord,
+                kind: monaco.languages.CompletionItemKind.Text,
+                insertText: existingWord,
+                range: range,
+            };
+        });
+    }
+
+    async function getWordInfo(word, range) {
+        let requestData = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    ocr_page_id: ocrPageId,
+                    word: word,
+                    range: range,
+                }
+            ),
+        };
+
+        let responseData = null;
+
+        try {
+            const response = await fetch(urlGetWordInfo, requestData);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            responseData = await response.json();
+
+            let tokensContent = responseData.word_tokens.map(item => ({
+                value: `${item.morphemes}  (${item.tokenizer})`
+            }));
+
+            return [
+                {value: "**SOURCE**"},
+                {value: `![img](${responseData.image_link})`},
+                {value: `confidence: ${responseData.confidence}`},
+                {value: `is_word_exist_dawg: [${responseData.is_word_exist_dawg}] (${responseData.frequency})`},
+                {value: `best_candidate: ${responseData.best_candidate}`},
+                {value: `coords: [${responseData.image_coords}], range [${range.startLineNumber}:${range.endLineNumber}:${range.startColumn}:${range.endColumn}]`},
+            ].concat(tokensContent);
+
+        } catch (error) {
+            console.error("Error while making the request:", error);
+            return null;
+        }
+    }
+
+    async function validate(text) {
+        let responseData = null;
+
+        let requestData = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    text: text,
+                }
+            ),
+        };
+
+        try {
+            const response = await fetch(urlSpellCheck, requestData);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            responseData = await response.json();
+
+            return responseData.markers
+        } catch (error) {
+            console.error("Error while making the request:", error);
+            return []
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+    let globalWordSuggestions = [];
+    let UniqSuggestionsSet = {};
+
+    let originalText = document.getElementById('full_text').innerText;
+
+    let modifiedText = document.getElementById('full_text_cleaned').innerText;
+
+    monaco.languages.register({id: "mySpecialLanguage"});
+
+    monaco.languages.setLanguageConfiguration('mySpecialLanguage', {
+        {#wordPattern: /(-?[\p{L}\p{N}!\[\]\/\\]+)/gu#}
+        wordPattern: /(-?[\p{L}\p{N}\[\]\/\\|\-.,!]+)/gu
+    });
+
+    let originalModel = monaco.editor.createModel(originalText, 'mySpecialLanguage');
+    let modifiedModel = monaco.editor.createModel(modifiedText, 'mySpecialLanguage');
+
+    let diffEditor = monaco.editor.createDiffEditor(
+        document.getElementById("container"),
+        {
+            originalEditable: false,
+            automaticLayout: true,
+            enableSplitViewResizing: true,
+            dragAndDrop: false,
+            diffCodeLens: true,
+            lineNumbers: (lineNumber) => {
+                return `<div class="clickable-line-number">${lineNumber}</div>`;
+            },
+            renderLineHighlight: 'gutter',
+        }
+    );
+
+
+    function handleLineNumberClick(lineNumber) {
+        console.log(
+            `Clicked line number: ${lineNumber}. ` +
+            `Line content: ${diffEditor.getModifiedEditor().getModel().getLineContent(lineNumber)}`
+        );
+    }
+
+    diffEditor.setModel({
+        original: originalModel,
+        modified: modifiedModel,
+    });
+
+    const OriginalEditor = diffEditor.getOriginalEditor();
+    const ModifiedEditor = diffEditor.getModifiedEditor();
+
+    OriginalEditor.onMouseDown(event => {
+        if (event.target.type === monaco.editor.MouseTargetType.GUTTER_LINE_NUMBERS) {
+            const lineNumber = event.target.position.lineNumber;
+            handleLineNumberClick(lineNumber);
+        }
+    });
+
+    leftVersionSelect.addEventListener('change', async () => {
+        const selectedLeftVersionId = leftVersionSelect.value;
+        const content = await fetchVersionContent(selectedLeftVersionId);
+        diffEditor.getOriginalEditor().setValue(content.text);
+    });
+
+    rightVersionSelect.addEventListener('change', async () => {
+        const selectedRightVersionId = rightVersionSelect.value;
+        const content = await fetchVersionContent(selectedRightVersionId);
+        diffEditor.getModifiedEditor().setValue(content.text);
+    });
+
+    diffEditor.addAction({
+        id: "action-save",
+        label: "Save changes",
+        keybindings: [
+            monaco.KeyMod.CtrlCmd | monaco.KeyCode.F2,
+        ],
+        precondition: null,
+        keybindingContext: null,
+        contextMenuGroupId: "navigation",
+        contextMenuOrder: 1,
+        run: async function (ed) {
+            const modifiedText = diffEditor.getModifiedEditor().getValue();
+            const result = await saveModifiedText(modifiedText);
+            if (result.status === 200) {
+                alert('Saved');
+                let versions = await fetchVersions();
+                fillVersionsSelect(versions);
+            } else {
+                alert('Error');
+            }
+        }
+    });
+
+    diffEditor.addAction({
+        id: "image-preview",
+        label: "Image preview",
+        keybindings: [
+            monaco.KeyCode.F4,
+        ],
+        precondition: null,
+        keybindingContext: null,
+        contextMenuGroupId: "navigation",
+        contextMenuOrder: 1,
+        run: function (ed) {
+            const OriginalEditor = diffEditor.getOriginalEditor();
+            let layoutInfo = OriginalEditor.getLayoutInfo();
+            console.log(layoutInfo);
+
+            const popup = document.createElement('div');
+            popup.style.position = 'absolute';
+            popup.style.top = '211px';
+            popup.style.left = layoutInfo.contentLeft + 10 + 'px';
+            popup.style.width = layoutInfo.contentWidth - layoutInfo.verticalScrollbarWidth + 'px';
+            popup.style.height = layoutInfo.height + 'px';
+            popup.style.background = 'white';
+            popup.style.border = '1px solid black';
+
+            const image = document.createElement('img');
+            image.src = "{{ base_image_url }}";
+            image.style.maxWidth = layoutInfo.contentWidth + 'px';
+            image.style.maxHeight = layoutInfo.height - 10 + 'px';
+            image.style.display = 'block';
+            image.style.margin = 'auto';
+            popup.appendChild(image);
+
+            document.body.appendChild(popup);
+
+            popup.addEventListener('click', () => {
+                document.body.removeChild(popup);
+            });
+        }
+    });
+
+    monaco.languages.registerCompletionItemProvider("mySpecialLanguage", {
+        provideCompletionItems: async function (model, position) {
+            let wordInfo = model.getWordUntilPosition(position);
+            let range = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: wordInfo.startColumn,
+                endColumn: wordInfo.endColumn,
+            };
+
+            let suggestionsFromServer = await getSuggestions(wordInfo.word, range);
+            console.log(suggestionsFromServer)
+
+            let text = model.getValue();
+            let suggestionsFromText = await getSuggestionsFromText(text, range);
+
+            let combinedSuggestions = suggestionsFromServer.concat(suggestionsFromText);
+
+            if (globalWordSuggestions.length > 2000) {
+                globalWordSuggestions = [];
+                UniqSuggestionsSet = {};
+            }
+
+            globalWordSuggestions = globalWordSuggestions.concat(combinedSuggestions.filter(item => {
+                if (!UniqSuggestionsSet[item.label]) {
+                    UniqSuggestionsSet[item.label] = true;
+                    return true;
+                }
+                return false;
+            }));
+            return {suggestions: combinedSuggestions};
+        },
+    });
+
+    monaco.languages.registerHoverProvider("mySpecialLanguage", {
+        provideHover: async function (model, position) {
+            let wordInfo = model.getWordAtPosition(position);
+            if (!wordInfo) {
+                return null;
+            }
+
+            let range = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: wordInfo.startColumn,
+                endColumn: wordInfo.endColumn,
+            };
+
+            let content = await getWordInfo(wordInfo.word, range);
+            if (!content) {
+                return null;
+            }
+
+            return {
+                range: range,
+                contents: content,
+            };
+        }
+    })
+
+    let markers = {{ markers | safe }};
+    monaco.editor.setModelMarkers(diffEditor.getModel().modified, "owner", markers);
+
+    modifiedModel.onDidChangeContent(
+        async () => {
+            let model = diffEditor.getModel().modified
+            markers = await validate(model.getValue());
+            monaco.editor.setModelMarkers(model, "owner", markers);
+        });
+
+</script>

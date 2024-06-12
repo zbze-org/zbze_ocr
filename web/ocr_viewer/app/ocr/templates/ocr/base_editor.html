@@ -1,0 +1,32 @@
+{% extends 'ocr/base.html' %}
+
+{% block head %}
+    {{ block.super }}
+    <link
+            rel="stylesheet"
+            data-name="vs/editor/editor.main"
+            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.40.0/min/vs/editor/editor.main.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'ocr_project_list' %}">Projects</a></li>
+        <li><a href="{% url 'ocr_project_detail' pk=ocr_page.ocr_project.pk %}"> {{ ocr_page.ocr_project.name }}</a>
+        </li>
+        <li class="active">{{ ocr_page.page_index }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div id="full_text" style="display: none;">{{ full_text|safe }}</div>
+        <div id="full_text_cleaned" style="display: none;">{{ full_text_cleaned|safe }}</div>
+    </div>
+
+    {% include 'ocr/ocr_monaco_editor_inline.html' %}
+
+{% endblock %}

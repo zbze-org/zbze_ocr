@@ -1,0 +1,54 @@
+{% extends 'ocr/base.html' %}
+
+
+{% load render_table from django_tables2 %}
+
+
+
+{% block content %}
+    {% render_table table %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const forms = document.querySelectorAll("form");
+
+            forms.forEach(function (form) {
+                form.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    const formId = form.getAttribute("id");
+                    const formData = new FormData(form);
+                    const text = formData.get("box_text");
+
+                    const data = {
+                        box_image_id: formId,
+                        text: text
+                    };
+
+                    const options = {
+                        method: "POST",
+                        body: JSON.stringify(data),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    };
+
+                    fetch("/api/ocr_box_text/update_text/", options)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            let ocr_box_image_id = data["ocr_box_image"];
+                            let text = data["text"];
+
+                            form = document.getElementById(ocr_box_image_id);
+                            form.querySelector("input[name='box_text']").value = text;
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="uppy"></div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module">
+        import {Uppy, XHRUpload, Dashboard} from "https://releases.transloadit.com/uppy/v3.25.2/uppy.min.mjs"
+
+        const uppy = new Uppy().use(XHRUpload, {endpoint: '/upload'})
+        uppy.use(Dashboard, {
+            inline: true,
+            target: '#uppy',
+            height: 400,
+            width: '100%',
+            proudlyDisplayPoweredByUppy: false,
+            note: 'Images and PDF files only',
+            restrictions: {maxNumberOfFiles: 1, allowedFileTypes: ['image/*', 'application/pdf']},
+            locale: {strings: {dropPaste: 'Drop image or PDF here or %{browse}', browse: 'browse'}}
+        })
+
+        uppy.on('complete', (result) => {
+            if (result.successful[0].response.body.task_id) {
+                window.location.href = '/pdf/' + result.successful[0].response.body.task_id;
+            }
+        });
+    </script>
+{% endblock %}
