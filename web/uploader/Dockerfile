@@ -70,7 +70,7 @@ RUN set -x \
 
 WORKDIR /var/www/
 
-COPY . .
+COPY .. .
 
 COPY kbd.traineddata /usr/share/tesseract-ocr/5/tessdata/kbd.traineddata
 
