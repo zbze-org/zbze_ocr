@@ -13,7 +13,7 @@ tokenizers
 pyahocorasick
 marisa-trie
 scikit-learn==1.3.2
-fuzzywuzzy==0.18.0
+fuzzywuzzy
 # spellchecker end
 
 python-slugify[unidecode]
@@ -21,7 +21,7 @@ apache-airflow-client
 
 # for cli commands
 click
-opencv-python~=4.8.0.74
+opencv-python
 pytesseract
 # cli commands end
 
@@ -29,3 +29,14 @@ pysnooper
 
 black[jupyter]
 isort
+numpy
+aiohttp
+Jinja2
+uvloop
+ocrmypdf
+Django
+djangorestframework
+django-simple-history
+Levenshtein
+django-filter
+pandas
