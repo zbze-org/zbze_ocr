@@ -38,7 +38,7 @@ def create_output_file_path(output_dir, steps_to_name_prefix, file_name, group_s
         os.makedirs(subdir, exist_ok=True)
         output_file_path = os.path.join(subdir, f'{steps_to_name_prefix}.{file_name.split(".")[-1]}')
     else:
-        output_file_path = os.path.join(output_dir, f"{steps_to_name_prefix}.{file_name}")
+        output_file_path = os.path.join(output_dir, file_name)
     return output_file_path
 
 

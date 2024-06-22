@@ -1,6 +1,7 @@
 import logging
 import os.path
 import shlex
+import shutil
 import subprocess
 
 import cv2
@@ -50,53 +51,38 @@ def smooth_contours(file_path, output_dir, debug=True, **kwargs):
 
 
 def unpaper_processing(file_path, output_dir, debug=False, **kwargs):
-    p = subprocess.Popen(
-        shlex.split(
-            f"convert -density 300 -resize 2481x3507 -depth 8 -colorspace Gray -sharpen 0x2.7 "
-            f"{file_path} {file_path}"
-        ),
-        stdout=subprocess.PIPE,
-    )
-    out, err = p.communicate()
-    if p.returncode != 0:
-        log.error(f"Error during convert command execution: {err}")
-        raise Exception(f"Error during convert command execution: {err}")
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+        shutil.copy(file_path, output_dir)
+        file_path = os.path.join(output_dir, os.path.basename(file_path))
 
-    p = subprocess.Popen(
-        shlex.split(
-            f"convert -black-threshold 35% -white-threshold 75% "
-            f"{file_path} {file_path}.pnm"
-        ),
-        stdout=subprocess.PIPE,
-    )
-    out, err = p.communicate()
-    if p.returncode != 0:
-        log.error(f"Error during convert command execution: {err}")
-        raise Exception(f"Error during convert command execution: {err}")
+    commands = [
+        f"convert -density 300 -resize 2481x3507 -depth 8 -colorspace Gray -sharpen 0x2.7 {file_path} {file_path}",
+        f"convert -black-threshold 35% -white-threshold 75% {file_path} {file_path}.pnm",
+        f"unpaper --layout single --black-threshold 0.1 -ni 8 {file_path}.pnm {file_path}.unpaper.pnm",
+        f"convert {file_path}.unpaper.pnm {file_path}"
+    ]
 
-    # unpaper --layout single
-    p = subprocess.Popen(
-        shlex.split(
-            f"unpaper --layout single --black-threshold 0.1 -ni 8 {file_path}.pnm {file_path}.unpaper.pnm"
-        ),
-        stdout=subprocess.PIPE,
-    )
-    out, err = p.communicate()
-    if p.returncode != 0:
-        log.error(f"Error during unpaper command execution: {err}")
-        raise Exception(f"Error during unpaper command execution: {err}")
+    for cmd in commands:
+        try:
+            if debug:
+                logging.debug(f"Executing command: {cmd}")
 
-    # convert pnm to jpg
-    p = subprocess.Popen(
-        shlex.split(
-            f"convert {file_path}.unpaper.pnm {file_path}"
-        ),
-        stdout=subprocess.PIPE,
-    )
-    out, err = p.communicate()
-    if p.returncode != 0:
-        log.error(f"Error during convert command execution: {err}")
-        raise Exception(f"Error during convert command execution: {err}")
+            result = subprocess.run(
+                shlex.split(cmd),
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+
+            if debug and result.stderr:
+                logging.debug(f"Command output: {result.stderr}")
+
+        except subprocess.CalledProcessError as e:
+            error_msg = f"Error during command execution: {e.stderr}"
+            logging.error(error_msg)
+            raise Exception(error_msg)
 
     os.remove(f"{file_path}.pnm")
     os.remove(f"{file_path}.unpaper.pnm")

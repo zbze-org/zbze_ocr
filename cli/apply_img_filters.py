@@ -16,7 +16,7 @@ DEFAULT_PROCESS_STEPS = [
 @click.option("--output-dir", "-o", default=None, help="Output directory path for the HTML file")
 @click.option("--file-mask", "-m", default="*.jpg", help="File mask")
 @click.option("--group", "-g", default=1, help="Group files")
-def apply_img_filters(input_file_path, input_dir, output_dir, file_mask, group):
+def apply_filters(input_file_path, input_dir, output_dir, file_mask, group):
     if not validate_input_file_path_and_dir_params(input_file_path, input_dir):
         return
 
@@ -32,4 +32,4 @@ def apply_img_filters(input_file_path, input_dir, output_dir, file_mask, group):
 
 
 if __name__ == "__main__":
-    apply_img_filters()
+    apply_filters()

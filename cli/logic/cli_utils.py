@@ -1,5 +1,7 @@
+import concurrent
 import fnmatch
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 import click
 from tqdm import tqdm
@@ -36,15 +38,26 @@ def get_files_to_process(input_file_path=None, input_dir=None, file_mask="*.jpg"
     return files_to_process
 
 
-def generic_file_processor(process_function, files, output_dir=None, description_prefix="", **kwargs):
-    progress_bar = tqdm(sorted(files), desc="Processing", unit="file")
-    for index, file_path in enumerate(progress_bar):
+def generic_file_processor(process_function, files, output_dir=None, description_prefix="", max_workers=None, **kwargs):
+    def process_file(file_path, index):
         path, file_name = os.path.split(file_path)
-        progress_bar.set_description(f"Processing with {process_function.__name__} {description_prefix}: {file_name}")
-
         ext = file_name.split(".")[-1]
         if output_dir is None:
-            output_dir = file_path[: -len(ext) - 1]
+            file_output_dir = file_path[: -len(ext) - 1]
+        else:
+            file_output_dir = output_dir
 
-        os.makedirs(output_dir, exist_ok=True)
-        process_function(file_path=file_path, output_dir=output_dir, page=index, **kwargs)
+        os.makedirs(file_output_dir, exist_ok=True)
+        process_function(file_path=file_path, output_dir=file_output_dir, page=index, **kwargs)
+
+    max_workers = max_workers or int(os.cpu_count() / 2)
+
+    sorted_files = sorted(files)
+    total_files = len(sorted_files)
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(process_file, file_path, index) for index, file_path in enumerate(sorted_files)]
+
+        for future in tqdm(concurrent.futures.as_completed(futures), total=total_files,
+                           desc=f"Processing with {process_function.__name__} {description_prefix}", unit="file"):
+            future.result()

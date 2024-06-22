@@ -1,7 +1,29 @@
 import os
-import subprocess
 
 import click
+import fitz
+from PIL import Image
+from tqdm import tqdm
+
+
+def split_pdf_to_jpeg_processing(input_file_path, output_dir, dpi=300):
+    os.makedirs(output_dir, exist_ok=True)
+
+    pdf_document = fitz.open(input_file_path)
+    total_pages = len(pdf_document)
+
+    with tqdm(total=total_pages, desc="Converting PDF to JPEG", unit="page") as pbar:
+        for page_number in range(total_pages):
+            page = pdf_document.load_page(page_number)
+            pix = page.get_pixmap(matrix=fitz.Matrix(dpi / 72, dpi / 72))
+
+            image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            image_path = os.path.join(output_dir, f"page_{page_number + 1:03d}.jpg")
+            image.save(image_path, "JPEG", quality=100)
+
+            pbar.update(1)
+
+    pdf_document.close()
 
 
 @click.command()
@@ -21,23 +43,7 @@ def split_pdf_to_jpeg(input_file_path, output_dir):
         click.echo("Please provide an output directory path.")
         return
 
-    file_name = os.path.basename(input_file_path)
-    output_file_path = os.path.join(output_dir, file_name)
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(output_file_path, exist_ok=True)
-
-    # Run the pdftoppm command
-    subprocess.run(
-        [
-            "pdftoppm",
-            "-jpeg",
-            "-progress",
-            "-r",
-            "300",
-            input_file_path,
-            output_file_path,
-        ]
-    )
+    split_pdf_to_jpeg_processing(input_file_path, output_dir)
 
 
 if __name__ == "__main__":
