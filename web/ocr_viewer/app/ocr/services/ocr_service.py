@@ -244,11 +244,9 @@ class DbManager:
 
 
 class ImageProcessor:
-    def __init__(self, image_path, html_base_path=None, html_result_path=None, db_manager=None):
+    def __init__(self, image_path, db_manager=None):
         self.image = cv2.imread(image_path)
         self.image_path = image_path
-        self.html_base_path = html_base_path
-        self.html_result_path = html_result_path
         self.ocr_page = None
         self.db_manager = db_manager
 
@@ -332,35 +330,13 @@ class ImageProcessor:
         full_text = self._process_df_by_line(image, result_df)
         return full_text
 
-    def generate_html(self, soup, full_text):
-        full_text_tag = soup.new_tag('div', id='full_text')
-        full_text_tag['style'] = 'display: none;'
-        full_text_tag.string = full_text
-
-        full_text_cleaned_tag = soup.new_tag('div', id='full_text_cleaned')
-        full_text_cleaned_tag['style'] = 'display: none;'
-        full_text_cleaned_tag.string = clean_text(full_text)
-
-        div_content = soup.find('div', class_='content')
-        div_content.append(full_text_tag)
-        div_content.append(full_text_cleaned_tag)
-
-        with open(self.html_result_path, 'w') as f:
-            f.write(str(soup))
-
     @timing_and_logging_decorator
-    def process_image(self, with_html=False):
+    def process_image(self):
         if self.db_manager:
             self.ocr_page = self.db_manager.get_or_create_ocr_page(image_path=self.image_path)
 
         result_df = self.extract_df()
         full_text = self.process_dataframe(image=self.image, result_df=result_df)
-
-        if not with_html:
-            with open(self.html_base_path, 'r') as f:
-                soup = BeautifulSoup(f, 'html.parser')
-
-            self.generate_html(soup, full_text)
 
         if self.db_manager:
             self.db_manager.update_ocr_page_text(ocr_page=self.ocr_page, text=full_text)

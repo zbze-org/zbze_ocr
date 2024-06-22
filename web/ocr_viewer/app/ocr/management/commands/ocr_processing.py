@@ -12,9 +12,6 @@ from ocr.services.ocr_service import ImageProcessor, DbManager
 class Command(BaseCommand):
     help = 'OCR test'
 
-    html_base_path = os.path.join(settings.BASE_DIR, 'ocr/templates/ocr/base_ocr.html')
-    html_result_path = os.path.join(settings.BASE_DIR, 'ocr/services/tests/result_src/ocr_result.html')
-
     def add_arguments(self, parser):
         parser.add_argument(
             '-path',
@@ -47,8 +44,6 @@ class Command(BaseCommand):
 
         processor = ImageProcessor(
             image_path=image_path,
-            html_base_path=self.html_base_path,
-            html_result_path=self.html_result_path,
             db_manager=db_manager
         )
         processor.process_image()
