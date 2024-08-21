@@ -7,6 +7,7 @@ seaborn== 0.13.2
 tqdm==4.66.1
 beautifulsoup4==4.12.2
 lxml==4.9.3
+ipython==8.12.3
 jupyter==1.0.0
 
 # for spellchecker
@@ -24,7 +25,11 @@ python-slugify[unidecode]==8.0.1
 click==8.1.7
 opencv-python==4.8.0.76
 pytesseract==0.3.10
-ocrmypdf==16.2.0
+ocrmypdf==16.3.1
+pypdf==4.3.1
+# pikepdf==8.15.1 --only-binary=pikepdf # for mac
+pikepdf==8.15.1
+PyMuPDF==1.24.9
 # cli commands end
 
 pysnooper==1.2.0
