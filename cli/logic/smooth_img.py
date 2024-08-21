@@ -16,6 +16,19 @@ log = logging.getLogger(__name__)
 
 SMOOTH_GAUSSIAN_BLUR_SIZE = (21, 5)
 
+IMAGE_MAGICK_CMD = "convert"
+UNPAPER_CMD = "unpaper"
+DENSITY = 300
+RESIZE_WIDTH = 2481
+RESIZE_HEIGHT = 3507
+DEPTH = 8
+COLORSPACE = "Gray"
+SHARPEN_FACTOR = "0x2.7"
+BLACK_THRESHOLD_PERCENT = "35%"
+WHITE_THRESHOLD_PERCENT = "75%"
+UNPAPER_BLACK_THRESHOLD = 0.1
+UNPAPER_NI = 8
+
 
 # def create_debug_images(contours, debug_dir, binary_image, mask, inverted_mask, contoured_image, output_image, ext):
 #     os.makedirs(debug_dir, exist_ok=True)
@@ -57,10 +70,10 @@ def unpaper_processing(file_path, output_dir, debug=False, **kwargs):
         file_path = os.path.join(output_dir, os.path.basename(file_path))
 
     commands = [
-        f"convert -density 300 -resize 2481x3507 -depth 8 -colorspace Gray -sharpen 0x2.7 {file_path} {file_path}",
-        f"convert -black-threshold 35% -white-threshold 75% {file_path} {file_path}.pnm",
-        f"unpaper --layout single --black-threshold 0.1 -ni 8 {file_path}.pnm {file_path}.unpaper.pnm",
-        f"convert {file_path}.unpaper.pnm {file_path}"
+        f"{IMAGE_MAGICK_CMD} -density {DENSITY} -resize {RESIZE_WIDTH}x{RESIZE_HEIGHT} -depth {DEPTH} -colorspace {COLORSPACE} -sharpen {SHARPEN_FACTOR} {file_path} {file_path}",
+        f"{IMAGE_MAGICK_CMD} -black-threshold {BLACK_THRESHOLD_PERCENT} -white-threshold {WHITE_THRESHOLD_PERCENT} {file_path} {file_path}.pnm",
+        f"{UNPAPER_CMD} --layout single --black-threshold {UNPAPER_BLACK_THRESHOLD} -ni {UNPAPER_NI} {file_path}.pnm {file_path}.unpaper.pnm",
+        f"{IMAGE_MAGICK_CMD} {file_path}.unpaper.pnm {file_path}"
     ]
 
     for cmd in commands:
