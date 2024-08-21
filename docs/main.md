@@ -5,6 +5,7 @@
    1. [Создание виртуального окружения](#создание-виртуального-окружения-с-python310)
    2. [Установка зависимостей](#установка-python-зависимостей)
    3. [Проверка и установка дополнительных инструментов](#проверка-и-установка-дополнительных-инструментов)
+      - [ImageMagick](#imagemagick) 
       - [OCRmyPDF](#ocrmypdf)
       - [Tesseract](#tesseract)
       - [Добавление языковой модели для Tesseract](#добавление-языковой-модели-для-tesseract)
@@ -30,6 +31,26 @@ pip install -r requirements.txt
 ```
 
 ### Проверка и установка дополнительных инструментов
+
+#### ImageMagick
+
+проверка версии:
+```shell
+convert --version
+```
+
+Пример вывода:
+```shell
+Version: ImageMagick 7.1.1-34 Q16-HDRI aarch64 22301 https://imagemagick.org
+Copyright: (C) 1999 ImageMagick Studio LLC
+License: https://imagemagick.org/script/license.php
+Features: Cipher DPC HDRI Modules OpenMP(5.0) 
+Delegates (built-in): bzlib fontconfig freetype gslib heic jng jp2 jpeg jxl lcms lqr ltdl lzma openexr png ps raw tiff webp xml zlib zstd
+Compiler: gcc (4.2)
+```
+
+Для установки следуйте инструкциям: [Install ImageMagick](https://imagemagick.org/script/download.php)
+
 
 #### OCRmyPDF
 
