@@ -1,42 +1,43 @@
 apache-airflow[celery,postgres,redis,pandas,ssh]==2.7.2
 -c https://raw.githubusercontent.com/apache/airflow/constraints-2.7.2/constraints-3.8.txt
-matplotlib
-pillow
-seaborn
-tqdm
-beautifulsoup4
-jupyter
+apache-airflow-client==2.7.2
+matplotlib==3.8.2
+pillow==10.2.0
+seaborn== 0.13.2
+tqdm==4.66.1
+beautifulsoup4==4.12.2
+lxml==4.9.3
+jupyter==1.0.0
 
 # for spellchecker
-nltk
-tokenizers
-pyahocorasick
-marisa-trie
+nltk==3.8.1
+tokenizers==0.15.1
+pyahocorasick==2.0.0
+marisa-trie==1.1.0
 scikit-learn==1.3.2
-fuzzywuzzy
+fuzzywuzzy==0.18.0
 # spellchecker end
 
-python-slugify[unidecode]
-apache-airflow-client
+python-slugify[unidecode]==8.0.1
 
 # for cli commands
-click
-opencv-python
-pytesseract
+click==8.1.7
+opencv-python==4.8.0.76
+pytesseract==0.3.10
+ocrmypdf==16.2.0
 # cli commands end
 
-pysnooper
+pysnooper==1.2.0
 
-black[jupyter]
-isort
-numpy
-aiohttp
-Jinja2
-uvloop
-ocrmypdf
-Django
-djangorestframework
-django-simple-history
-Levenshtein
-django-filter
-pandas
+black[jupyter]==23.9.1
+isort==5.13.2
+numpy==1.24.4
+aiohttp==3.8.6
+Jinja2==3.1.2
+uvloop==0.19.0
+Django==5.0.6
+djangorestframework==3.15.1
+django-simple-history==3.7.0
+django-filter==24.2
+Levenshtein==0.25.1
+pandas==2.0.3
