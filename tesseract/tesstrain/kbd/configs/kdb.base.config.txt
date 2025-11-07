@@ -19,19 +19,6 @@ load_bigram_dawg	1	Load dawg with special word bigrams.
 
 # добавить пенальти для слов не из словаря,пока не подобрал оптимальное значение
 language_model_penalty_non_freq_dict_word	0.2	Penalty for words not in the frequent word dictionary
-
-# https://github.com/ocrmypdf/OCRmyPDF/issues/885
-
-# https://github.com/tesseract-ocr/tesseract/issues/2940#issuecomment-610052659
-# Here Is two configurable parameters:
-#
-# language_model_penalty_non_dict_word
-# language_model_penalty_non_freq_dict_word
-#
-# Note that these parameter are used only by the legacy engine.
-#
-# In general, unlike the legacy engine, the neural network based engine has very little configurable parameters.
-
 # добавить пенальти для слов из словаря (0.7 - 0.8 прям хорошо)
 language_model_penalty_non_dict_word	0.7	Penalty for non-dictionary words
 language_model_penalty_punc	0.2	Penalty for inconsistent punctuation
