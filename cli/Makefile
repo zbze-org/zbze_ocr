@@ -21,6 +21,7 @@ DEFAULT_STEPS := check-input \
 	rotate-images \
 	apply-image-filters \
 	standartize-images \
+	tesseract-images \
 	join-images-to-pdf \
 	copy-original-pdf \
 	clean-tmp-dir \
@@ -81,6 +82,10 @@ apply-image-filters:
 standartize-images:
 	@echo "${GREEN}Стандартизация изображений...${NC}"
 	python standartize_img.py -d $(FILTERED_DIR) -o $(STANDARDIZED_DIR)
+
+tesseract-images:
+	@echo "${GREEN}Оптическое распознавание текста...${NC}"
+	python run_tesseract_for_page.py -l kbd -j $(STANDARDIZED_DIR) -t $(TMP_PROCESSING_DIR)/tesseract_output
 
 join-images-to-pdf:
 	@echo "${GREEN}Склейка изображений в PDF...${NC}"

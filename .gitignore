@@ -47,3 +47,5 @@ MANIFEST
 
 # Jupyter Notebook
 .ipynb_checkpoints
+# Development notes (not for public repository)
+CLAUDE.md
