@@ -6,7 +6,6 @@ data/dag_results/
 /data/pdf_processed/
 /tesseract/finetune_boxes/
 /tesseract/finetune_boxes/output/
-tesseract/tesstrain/kbd/fonts/
 tesseract/tesstrain/kbd/train_data/input/.txt
 .idea
 airflow.cfg
