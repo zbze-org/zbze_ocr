@@ -10,9 +10,9 @@ BASE_PDF_DIR = os.path.join(BASE_DATA_DIR, "pdfs")
 PDF_PROCESSING_RESULT_DIR = os.path.join(BASE_DAG_RESULTS_DIR, "pdf_processing")
 LANG_COMPARE_RESULT_DIR = os.path.join(BASE_DAG_RESULTS_DIR, "lang_compare")
 
-TESSTRAIN_PROJECT_DIR = "/Users/panagoa/PycharmProjects/tesstrain"
+TESSTRAIN_PROJECT_DIR = os.getenv("TESSTRAIN_PROJECT_DIR", os.path.join(PROJECT_DIR, "../tesstrain"))
 TESSTRAIN_TESSDATA_DIR = os.path.join(TESSTRAIN_PROJECT_DIR, "usr/share/tessdata")
-GLOBAL_TESSDATA_DIR = "/opt/homebrew/share/tessdata"
+GLOBAL_TESSDATA_DIR = os.getenv("GLOBAL_TESSDATA_DIR", "/usr/share/tessdata")
 
 FONT_DIR = "../fonts"
 FONT_SIZE = 20

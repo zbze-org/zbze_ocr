@@ -6,7 +6,6 @@ data/dag_results/
 /data/pdf_processed/
 /tesseract/finetune_boxes/
 /tesseract/finetune_boxes/output/
-tesseract/tesstrain/kbd/fonts/
 tesseract/tesstrain/kbd/train_data/input/.txt
 .idea
 airflow.cfg
@@ -47,3 +46,5 @@ MANIFEST
 
 # Jupyter Notebook
 .ipynb_checkpoints
+# Development notes (not for public repository)
+CLAUDE.md

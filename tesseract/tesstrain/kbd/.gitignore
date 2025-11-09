@@ -1,0 +1,111 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Tesseract temporary files
+*.box
+*.lstmf
+*.log
+*.traineddata.checkpoint
+*.lstm
+*.lstm-*
+*.checkpoint
+*_config.txt~
+
+# Training artifacts
+train_data/temp/
+train_data/cache/
+data/ground-truth/
+*.tif
+*.tiff
+*.box
+
+# Output directories
+output/
+results/
+temp/
+tmp/
+
+# OCR outputs
+*.hocr
+*.tsv
+*.alto
+*.pdf.txt
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+
+# Documentation build
+docs/_build/
+site/
+
+# Local configuration
+.env
+.env.local
+local_config.py
+secrets.json
+
+# Model checkpoints (optional, depending on if you want to track these)
+# Uncomment if you want to ignore checkpoint files
+# *.checkpoint
+# checkpoints/

@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
+from src.const import TESSTRAIN_PROJECT_DIR
 from src.image_generator import generate_images
 from src.prepare_tessdata import prepare_box_lstmf
 
@@ -25,7 +26,7 @@ dag = DAG(
     params={
         "TEXT_FILEPATH": "data/tesstrain/kbd/data/output/lines_oshamaho.txt",
         "FONT_DIR": "data/tesstrain/kbd/fonts",
-        "OUTPUT_DIR": "/Users/panagoa/tesstrain_data/",
+        "OUTPUT_DIR": os.getenv("TESSTRAIN_DATA_DIR", os.path.join(TESSTRAIN_PROJECT_DIR, "data")),
         "FONT_SIZE": 20,
         "TEXT_LINES_MAX_COUNT": 5000,
         "GROUP_BY": 0,
@@ -34,11 +35,11 @@ dag = DAG(
         "TESSTRAIN_MODEL_NAME": "",
         "TESSTRAIN_START_MODEL": "rus",
         "TESSTRAIN_MAX_ITERATIONS": "20000",
-        "TESSTRAIN_GROUND_TRUTH_DIR": "/Users/panagoa/PycharmProjects/tesstrain/data/ground_truth",
+        "TESSTRAIN_GROUND_TRUTH_DIR": os.getenv("GROUND_TRUTH_DIR", os.path.join(TESSTRAIN_PROJECT_DIR, "data/ground_truth")),
         "TESSTRAIN_WORDLIST_FILE": "data/tesstrain/kbd/configs/kbd.numbers",
         "TESSTRAIN_NUMBERS_FILE": "data/tesstrain/kbd/configs/kbd.punc",
         "TESSTRAIN_PUNC_FILE": "data/tesstrain/kbd/configs/kbd.wordlist",
-        "TESSTRAIN_LOG_FILE": "/Users/panagoa/PycharmProjects/tesstrain/plot/output_kbd_airflow.log",
+        "TESSTRAIN_LOG_FILE": os.getenv("TESSTRAIN_LOG_FILE", os.path.join(TESSTRAIN_PROJECT_DIR, "plot/output_kbd_airflow.log")),
         "TESSTRAIN_TEST_PDF_NAME": "dysche_zhyg.pdf",
         "TESSTRAIN_LANG_COMPARE": "kbd_0.009_4360_66700",
     },

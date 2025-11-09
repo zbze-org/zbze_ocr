@@ -5,17 +5,26 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import click
 
+# Image processing commands
 from cli import (
     apply_img_filters,
-    box_processing,
-    ocr_text_diff,
     rotate_img,
-    run_tesseract_for_page,
     smooth_img,
+    standartize_img,
+    unpaper_img,
+)
+
+# OCR commands
+from cli import (
+    run_tesseract_for_page,
+    ocr_text_diff,
+)
+
+# Layout analysis commands
+from cli import (
     split_book_layout,
     split_pdf_to_jpeg,
-    unpaper_img,
-    standartize_img,
+    box_processing,
 )
 
 

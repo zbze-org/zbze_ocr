@@ -66,11 +66,13 @@ def split_book_processing(file_path, output_dir=None, plot=False, **kwargs):
         plot_images(img, edges, left_img, right_img)
 
 
-if __name__ == "__main__":
-    # Путь к файлу изображения
-    IMG_FILEPATH = "/Users/panagoa/PycharmProjects/zbze-nlp/notebooks/ocr/pdf_test/Къалэмбий_Адыгэ_хъыбархэр_1978/Къалэмбий_Адыгэ_хъыбархэр_1978-05.jpg"
-
-    split_book_processing(
-        IMG_FILEPATH,
-        output_dir="/Users/panagoa/PycharmProjects/zbze-nlp/notebooks/ocr/pdf_test/Къалэмбий_Адыгэ_хъыбархэр_1978/",
-    )
+# Example usage (uncomment and modify paths as needed):
+# if __name__ == "__main__":
+#     import sys
+#     if len(sys.argv) < 3:
+#         print("Usage: python split_book_layout.py <input_image> <output_dir>")
+#         sys.exit(1)
+#
+#     img_filepath = sys.argv[1]
+#     output_dir = sys.argv[2]
+#     split_book_processing(img_filepath, output_dir=output_dir)

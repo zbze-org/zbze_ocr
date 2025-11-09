@@ -11,7 +11,6 @@ from pathlib import Path
 import cv2
 import pytesseract
 from PIL import Image
-from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.files.base import File
 
@@ -251,7 +250,7 @@ class ImageProcessor:
         self.db_manager = db_manager
 
     @timing_and_logging_decorator
-    def create_cropped_image(self, image, box_data, resize_factor=2):
+    def create_cropped_image(self, image, box_data, resize_factor=4):
         cropped = image[
                   box_data.coordinates.top:box_data.coordinates.top + box_data.coordinates.height,
                   box_data.coordinates.left:box_data.coordinates.left + box_data.coordinates.width,
